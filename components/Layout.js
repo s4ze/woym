@@ -1,13 +1,13 @@
 import React from 'react';
 import Sidebar from './Sidebar';
 
-function Layout ({ children }) {
+function Layout ({ children, hideSidebar }) {
     return (
         <div className="flex max-w-6xl mt-4 mx-auto gap-4">
-            <div className="w-1/4">
+            {!hideSidebar && (<div className="w-1/4">
                 <Sidebar />
-            </div>
-            <div className="w-3/4">
+            </div>)}
+            <div className={hideSidebar ? "w-full" : "w-3/4"}>
                 {children}
             </div>
         </div>

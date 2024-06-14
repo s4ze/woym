@@ -2,6 +2,7 @@
 import Layout from "@/components/Layout";
 import PostCard from "../components/PostCard";
 import PostFormCard from "../components/PostFormCard";
+
 import '../styles/globals.css';
 
 
