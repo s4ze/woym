@@ -1,0 +1,6 @@
+@woym_backend_HostAddress = http://localhost:5149
+
+GET {{woym_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
