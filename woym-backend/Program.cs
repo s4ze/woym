@@ -1,5 +1,10 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using woym.Data;
+using woym.Interfaces;
+using woym.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +15,30 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<WoymDataContext>(
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options => {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = AuthenticationOptions.ISSUER,
+            ValidateAudience = true,
+            ValidAudience = AuthenticationOptions.AUDIENCE,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = AuthenticationOptions.GetSymmetricSecurityKey(),
+        };
+    }
+); 
+
+builder.Services.AddAuthorization(options => 
+{
+    options.AddPolicy("AdminPolicy", policy => 
+    {
+        policy.RequireClaim("admin", "true");
+    });
+});
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddDbContext<DataContext>(
     options => options.UseNpgsql(DatabaseData.Connection)
 );
 
@@ -23,7 +51,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

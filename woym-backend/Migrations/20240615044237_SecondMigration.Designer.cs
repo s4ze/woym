@@ -12,8 +12,8 @@ using woym.Data;
 namespace woym_backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240614200634_InitialDatabase")]
-    partial class InitialDatabase
+    [Migration("20240615044237_SecondMigration")]
+    partial class SecondMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace woym_backend.Migrations
 
             NpgsqlModelBuilderExtensions.UseSerialColumns(modelBuilder);
 
-            modelBuilder.Entity("woym.Data.User", b =>
+            modelBuilder.Entity("woym.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

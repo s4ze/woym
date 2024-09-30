@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using woym.Models;
 
 namespace woym.Data;
 
-public class WoymDataContext : DbContext
+public class DataContext : DbContext
 {
-    public WoymDataContext(DbContextOptions<WoymDataContext> options):
+    public DataContext(DbContextOptions<DataContext> options):
         base(options) 
     {}
     protected override void OnModelCreating(ModelBuilder modelBuilder) {

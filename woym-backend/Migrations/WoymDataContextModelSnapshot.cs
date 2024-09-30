@@ -10,7 +10,7 @@ using woym.Data;
 
 namespace woym_backend.Migrations
 {
-    [DbContext(typeof(WoymDataContext))]
+    [DbContext(typeof(DataContext))]
     partial class WoymDataContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -22,11 +22,14 @@ namespace woym_backend.Migrations
 
             NpgsqlModelBuilderExtensions.UseSerialColumns(modelBuilder);
 
-            modelBuilder.Entity("woym.Data.User", b =>
+            modelBuilder.Entity("woym.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("Admin")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -37,6 +40,10 @@ namespace woym_backend.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RefreshToken")
                         .IsRequired()
                         .HasColumnType("text");
 
