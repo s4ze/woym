@@ -24,7 +24,7 @@ public class User
         this.Password = BCrypt.Net.BCrypt.HashPassword(password, salt);
     }
     public User() { }
-    public string RefreshToken { get; set; }
+    public string? RefreshToken { get; set; }
     [Required]
     public Guid Id { get; set; }
     public string Email { get; set; }
