@@ -16,7 +16,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options => {
+    .AddJwtBearer(options =>
+    {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -28,16 +29,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = AuthenticationOptions.GetSymmetricSecurityKey(),
         };
     }
-); 
+);
 
-builder.Services.AddAuthorization(options => 
+builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminPolicy", policy => 
+    options.AddPolicy("AdminPolicy", policy =>
     {
         policy.RequireClaim("admin", "true");
     });
 });
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddDbContext<DataContext>(
     options => options.UseNpgsql(DatabaseData.Connection)
 );

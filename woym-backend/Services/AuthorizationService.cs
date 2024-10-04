@@ -7,11 +7,13 @@ using woym.Data;
 using woym.Interfaces;
 using woym.Models;
 
-namespace woym.Services {
+namespace woym.Services
+{
     public class AuthorizationService : IAuthorizationService
     {
         private readonly DataContext _context;
-        public AuthorizationService(DataContext context) {
+        public AuthorizationService(DataContext context)
+        {
             _context = context;
         }
         /*public string CheckAccessToken(string accessToken)
@@ -36,53 +38,39 @@ namespace woym.Services {
 
             // decodes token and finds user's email
             var email = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
-                
+
             // gets this user's refreshToken from db
             var user = _context.Users.First(u => u.Email == email);
             var refreshTokenFromDatabase = user.RefreshToken;
 
             // compares tokens. if both aren't compare then return 401 or 403
-            if (refreshTokenFromDatabase == null || refreshTokenFromDatabase != refreshTokenFromRequest) return "401 staus. log in again";
-            
+            if (refreshTokenFromDatabase == null || refreshTokenFromDatabase != refreshTokenFromRequest) return "401 status. log in again";
+
             // generates new access and refresh tokens. saves refresh token to db. returns accessT and refreshT to user,
             var accessToken = GenerateAccessToken(email);
-            refreshTokenFromDatabase = GenerateRefreshToken(user);
-            TokenResponse tokens = new (accessToken, refreshTokenFromDatabase);
+            refreshTokenFromDatabase = GenerateRefreshToken(email);
+
+            user.RefreshToken = refreshTokenFromDatabase;
+            _context.SaveChanges();
+
+            TokenResponse tokens = new(accessToken, refreshTokenFromDatabase);
             string json = JsonConvert.SerializeObject(tokens);
 
             return json;
         }
-        public string GenerateAccessToken(string email)
+        public string GenerateAccessToken(string email, bool admin = false)
         {
             // Создаём claims
-            List<Claim> claims = new() { new(ClaimTypes.Email, email) };
-            // Создаём refreshToken, добавляем claims и указываем headers
-            JwtSecurityToken accessToken = new (
-                    claims: claims,
-                    issuer: AuthenticationOptions.ISSUER,
-                    audience: AuthenticationOptions.AUDIENCE,
-                    signingCredentials: new SigningCredentials(
-                        AuthenticationOptions.GetSymmetricSecurityKey(), 
-                        SecurityAlgorithms.HmacSha256
-                    ),
-                    expires: DateTime.UtcNow.AddMinutes(30)
-                );
-            var accessTokenValue = new JwtSecurityTokenHandler().WriteToken(accessToken);
-            return accessTokenValue;
-        }
-        public string GenerateAccessToken(string email, bool admin)
-        {
-            // Создаём claims
-            List<Claim> claims = new() { new(ClaimTypes.Email, email) };
+            List<Claim> claims = [new(ClaimTypes.Email, email)];
             if (admin == true)
                 claims.Add(new("admin", "true"));
             // Создаём refreshToken, добавляем claims и указываем headers
-            JwtSecurityToken accessToken = new (
+            JwtSecurityToken accessToken = new(
                     claims: claims,
                     issuer: AuthenticationOptions.ISSUER,
                     audience: AuthenticationOptions.AUDIENCE,
                     signingCredentials: new SigningCredentials(
-                        AuthenticationOptions.GetSymmetricSecurityKey(), 
+                        AuthenticationOptions.GetSymmetricSecurityKey(),
                         SecurityAlgorithms.HmacSha256
                     ),
                     expires: DateTime.UtcNow.AddMinutes(30)
@@ -90,27 +78,31 @@ namespace woym.Services {
             var accessTokenValue = new JwtSecurityTokenHandler().WriteToken(accessToken);
             return accessTokenValue;
         }
-        public string GenerateRefreshToken(User user)
+        public string GenerateRefreshToken(string email)
         {
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
             // Создаём claims
-            List<Claim> claims = new() { new(ClaimTypes.Email, user.Email) };
-            if (user.Admin == true)
+            List<Claim> claims = new() { new(ClaimTypes.Email, email) };
+            if (user?.Admin == true)
                 claims.Add(new("admin", "true"));
             // Создаём refreshToken, добавляем claims и указываем headers
-            JwtSecurityToken refreshToken = new (
+            JwtSecurityToken refreshToken = new(
                     claims: claims,
                     issuer: AuthenticationOptions.ISSUER,
                     audience: AuthenticationOptions.AUDIENCE,
                     signingCredentials: new SigningCredentials(
-                        AuthenticationOptions.GetSymmetricSecurityKey(), 
+                        AuthenticationOptions.GetSymmetricSecurityKey(),
                         SecurityAlgorithms.HmacSha256
                     ),
                     expires: DateTime.UtcNow.AddDays(15)
                 );
             var refreshTokenValue = new JwtSecurityTokenHandler().WriteToken(refreshToken);
-            user.RefreshToken = refreshTokenValue;
-            _context.Users.Update(user);
-            _context.SaveChanges();
+            if (user != null)
+            {
+                user.RefreshToken = refreshTokenValue;
+                _context.Users.Update(user);
+                _context.SaveChanges();
+            }
             return refreshTokenValue;
         }
     }
