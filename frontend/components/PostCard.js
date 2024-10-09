@@ -26,7 +26,7 @@ function PostCard () {
               <p>
                 <Link href={'/profile'}>
                   <span className="font-semibold hover:underline cursor-pointer">
-                    User
+                    Anvar Sizov
                   </span>
                 </Link>
                 {' shared a '}  

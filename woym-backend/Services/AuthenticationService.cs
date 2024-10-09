@@ -40,9 +40,8 @@ namespace woym.Services
                 var refreshToken = _authorizationService.GenerateRefreshToken(email);
 
                 TokenResponse tokens = new(accessToken, refreshToken);
-                string response = JsonConvert.SerializeObject(tokens);
                 // TODO: ADD AUTHORIZATIONSERVICE.GENERATEREFRESHTOKEN. SEND REFRESHTOKEN IN REQUEST. CLIENT UPDATES REFRESHTOKEN IN LOCALSTORAGE
-                return Results.Ok(response);
+                return Results.Ok(tokens);
             }
             return Results.Unauthorized();
         }

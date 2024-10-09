@@ -8,9 +8,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        woymBg:'#F5F7FB',
-        woymBlue:'#218DFA',
-      }
+        woymBg: "#F5F7FB",
+        woymBlue: "#218DFA",
+      },
     },
   },
   plugins: [],

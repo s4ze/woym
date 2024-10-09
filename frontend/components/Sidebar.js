@@ -1,10 +1,25 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import Card from "./Card";
 import Link from "next/link";
+import { useState } from "react";
+import Cookies from "universal-cookie";
+import { jwtDecode } from "jwt-decode";
 
 function Sidebar () {
     const pathname = usePathname();
+    /*const [user, setUser] = useState();
+
+    const cookies = new Cookies();
+    const jwt = cookies.get('jwt');
+    const decodedJwt = jwtDecode(jwt);
+    setUser(decodedJwt);
+
+    const logOut = () => {
+        setUser(null);
+        cookies.remove('jwt');
+        redirect('/')
+    }*/
 
     const activeElementClasses = 'flex gap-3 py-3 my-1 bg-woymBlue text-white -mx-10 px-10 rounded-md shadow-md shadow-gray-300';
     const nonActiveElementClasses = 'flex gap-3 py-2 my-2 hover:bg-woymBlue hover:bg-opacity-20 -mx-4 p-4 rounded-md transition-all hover:scale-110 hover:shadow-gray-300';
@@ -37,12 +52,14 @@ function Sidebar () {
                     </svg>
                     Notifications
                 </Link>
-                <Link href="/login" className={nonActiveElementClasses}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
-                    </svg>
-                    Log out
-                </Link>
+                {/*user && (*/
+                    <button onClick={()=>{}/*logOut()*/} className={nonActiveElementClasses}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+                        </svg>
+                        Log out
+                    </button>
+                /*)*/}
             </div>
         </Card> 
     );

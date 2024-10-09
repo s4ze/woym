@@ -6,7 +6,7 @@ function Avatar ({ size }) {
 
     return (
         <div className={`${width} rounded-full overflow-hidden`}>
-            <img src='https://yt3.googleusercontent.com/GbNZ376PtR6w-cUMn9zWCrU1HhvG5m-8R7rFeadGmwT6ueb8CnWyO4OgyJIrEZrm_c2W1EDd=s176-c-k-c0x00ffffff-no-rj' />
+            <img src='https://i.pinimg.com/originals/e1/1f/06/e11f0644f5cac8de0c875cf246dc35dc.jpg'/>
         </div>
     );
 }
