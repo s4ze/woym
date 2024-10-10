@@ -18,7 +18,7 @@ namespace woym.Controllers
         {
             // call auth service with check refresh token method and return access and refresh (last in protected cookies) tokens
             var result = _authorizationService.CheckRefreshToken(refreshToken);
-            // _authorizationService.
+
             if (result == "expired") return Results.Unauthorized();
             if (result == "401 staus. log in again") return Results.Unauthorized();
 

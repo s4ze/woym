@@ -16,14 +16,13 @@ namespace woym.Services
         {
             _context = context;
         }
-        /*public string CheckAccessToken(string accessToken)
+        public bool CheckAccessToken(string accessToken)
         {
             var handler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = handler.ReadJwtToken(accessToken);
             // verify token
-            // jwtSecurityToken.EncryptingCredentials.Key.
-            return "";
-        }*/
+            handler.ValidateToken(accessToken, AuthenticationOptions.TokenValidationParameters, out SecurityToken validatedToken);
+            return validatedToken is JwtSecurityToken;
+        }
         public string CheckRefreshToken(string refreshTokenFromRequest)
         {
             // gets refreshtoken from user

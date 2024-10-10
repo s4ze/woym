@@ -18,16 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = AuthenticationOptions.ISSUER,
-            ValidateAudience = true,
-            ValidAudience = AuthenticationOptions.AUDIENCE,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = AuthenticationOptions.GetSymmetricSecurityKey(),
-        };
+        options.TokenValidationParameters = AuthenticationOptions.TokenValidationParameters;
     }
 );
 
