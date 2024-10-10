@@ -40,7 +40,7 @@ namespace woym.Services
                 var refreshToken = _authorizationService.GenerateRefreshToken(email);
 
                 TokenResponse tokens = new(accessToken, refreshToken);
-                // TODO: ADD AUTHORIZATIONSERVICE.GENERATEREFRESHTOKEN. SEND REFRESHTOKEN IN REQUEST. CLIENT UPDATES REFRESHTOKEN IN LOCALSTORAGE
+
                 return Results.Ok(tokens);
             }
             return Results.Unauthorized();
@@ -48,7 +48,10 @@ namespace woym.Services
         public bool CheckForLogin(string email, string password)
         {
             var user = _context.Users.FirstOrDefault(u => u.Email == email);
-            if (user == null) return false;
+            if (user == null)
+            {
+                return false;
+            }
             return BCrypt.Net.BCrypt.Verify(password, user.Password);
         }
         public bool CheckForExistingUserByEmail(string email)

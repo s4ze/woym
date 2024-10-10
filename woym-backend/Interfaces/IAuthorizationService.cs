@@ -4,7 +4,8 @@ namespace woym.Interfaces;
 public interface IAuthorizationService
 {
     bool CheckAccessToken(string accessToken);
-    string CheckRefreshToken(string refreshToken);
+    bool CheckRefreshToken(string refreshToken);
     string GenerateRefreshToken(string email);
     string GenerateAccessToken(string email, bool admin);
+    string RefreshToken(string refreshToken);
 }
