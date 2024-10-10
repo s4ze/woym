@@ -50,12 +50,12 @@ const LoginPage = () => {
       const decodedAccessToken = jwtDecode(tokens.accessToken);
       const decodedRefreshToken = jwtDecode(tokens.refreshToken);
 
-      cookies.set("refreshToken", decodedRefreshToken, {
+      cookies.set("refreshToken", tokens.refreshToken, {
         expires: new Date(decodedRefreshToken.exp * 1000),
       });
 
-      cookies.set("accessToken", decodedAccessToken, {
-        expires: new Date(decodedRefreshToken.exp * 1000),
+      cookies.set("accessToken", tokens.accessToken, {
+        expires: new Date(decodedAccessToken.exp * 1000),
       });
 
       toast.success("Login succesful");
