@@ -16,11 +16,7 @@ namespace woym.Controllers
         [Route("refresh")]
         public IResult RefreshToken(string refreshToken)
         {
-            string result = _authorizationService.RefreshToken(refreshToken);
-
-            if (result == "401") return Results.Unauthorized();
-
-            return Results.Ok(result);
+            return _authorizationService.RefreshToken(refreshToken);
         }
     }
 }

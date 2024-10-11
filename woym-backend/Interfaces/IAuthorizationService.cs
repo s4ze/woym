@@ -7,5 +7,5 @@ public interface IAuthorizationService
     bool CheckRefreshToken(string refreshToken);
     string GenerateRefreshToken(string email);
     string GenerateAccessToken(string email, bool admin);
-    string RefreshToken(string refreshToken);
+    IResult RefreshToken(string refreshToken);
 }

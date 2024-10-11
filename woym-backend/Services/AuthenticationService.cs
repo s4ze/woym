@@ -1,8 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using BCrypt.Net;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using woym.Data;
 using woym.Interfaces;
 using woym.Models;
@@ -12,15 +7,13 @@ namespace woym.Services
     public class AuthenticationService : IAuthenticationService
     {
         private readonly DataContext _context;
-        private readonly IAuthorizationService _authorizationService;
         /* public AuthenticationService(DataContext context)
         {
             _context = context;
         } */
-        public AuthenticationService(DataContext context, IAuthorizationService authorizationService)
+        public AuthenticationService(DataContext context)
         {
             _context = context;
-            _authorizationService = authorizationService;
         }
         public IResult Register(string email, string name, string password)
         {
@@ -34,14 +27,10 @@ namespace woym.Services
         }
         public IResult Login(string email, string password)
         {
-            if (CheckForLogin(email, password))
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
-                var accessToken = _authorizationService.GenerateAccessToken(email, IsAdmin(email));
-                var refreshToken = _authorizationService.GenerateRefreshToken(email);
-
-                TokenResponse tokens = new(accessToken, refreshToken);
-
-                return Results.Ok(tokens);
+                return Results.Ok();
             }
             return Results.Unauthorized();
         }

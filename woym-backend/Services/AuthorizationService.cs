@@ -105,9 +105,8 @@ namespace woym.Services
             // if user is null - unexpected result in system
             return refreshToken;
         }
-        public string RefreshToken(string token)
+        public IResult RefreshToken(string token)
         {
-            string result;
             if (CheckRefreshToken(token))
             {
                 var handler = new JwtSecurityTokenHandler();
@@ -121,13 +120,10 @@ namespace woym.Services
 
                 TokenResponse tokens = new(accessToken, refreshToken);
 
-                result = tokens.ToString()!;
+                return Results.Ok(tokens);
             }
-            else
-            {
-                result = "401";
-            }
-            return result;
+
+            return Results.Unauthorized();
         }
     }
 }
