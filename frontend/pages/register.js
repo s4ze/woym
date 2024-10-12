@@ -2,41 +2,55 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
+import axios from "../hooks/axios";
 
 import Card from "../components/Card";
 import Layout from "../components/Layout";
+
 import "../styles/globals.css";
 
 const RegisterPage = () => {
-  const url = "http://localhost:5149/api/Authentication/register";
+  const registerUrl = "/Authentication/register";
+  const loginUrl = "/Authentication/login";
   const router = useRouter();
 
   const register = async () => {
-    const registerEmail = document.querySelector("#email").value;
-    const registerName = document.querySelector("#name").value;
-    const registerPassword = document.querySelector("#password").value;
+    const email = document.querySelector("#email").value;
+    const name = document.querySelector("#name").value;
+    const password = document.querySelector("#password").value;
 
-    const newRegister = {
-      email: registerEmail,
-      name: registerName,
-      password: registerPassword,
-    };
+    toast.success("BRUH");
+    try {
+      const result = await axios.post(registerUrl, {
+        email: email,
+        name: name,
+        password: password,
+      });
 
-    const headers = new Headers();
-    headers.set("Content-Type", "application/json");
+      if (result.status === 200) {
+        toast.success("Register successful");
+        toast.loading("Attempting to log in...");
 
-    const options = {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(newRegister),
-    };
+        try {
+          const loginResult = await axios.post(loginUrl, {
+            email: email,
+            password: password,
+          });
 
-    const result = await fetch(url, options);
-    if (result.ok) {
-      toast.success("Register successful");
-      router.push("/login");
-    } else {
+          if (loginResult.status === 200) {
+            setToken(loginResult.data.accessToken);
+            toast.success("Login succesful");
+            router.push("/");
+          }
+        } catch (e) {
+          toast.error("Login failed");
+          router.push("/login");
+          console.log(e.message);
+        }
+      }
+    } catch (e) {
       toast.error("Register failed");
+      console.log(e.message);
     }
   };
 
@@ -44,7 +58,7 @@ const RegisterPage = () => {
     <Layout hideSidebar={true}>
       <div className="h-screen flex items-center">
         <div className="max-w-sm mx-auto grow -mt-8">
-          <h1 className="text-6xl mb-4 text-gray-300">Login</h1>
+          <h1 className="text-6xl mb-4 text-gray-300">Registration</h1>
           <Card>
             <div className="m-2">
               <div className="m-2">

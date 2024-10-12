@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 
 import Avatar from "../../components/Avatar";
@@ -14,9 +13,10 @@ import PhotosTab from "../../components/PhotosTab";
 import PostsTab from "../../components/PostsTab";
 
 import "../../styles/globals.css";
+import { usePathname } from "next/navigation";
 
 function ProfilePage() {
-  const pathname = useRouter().asPath;
+  const pathname = usePathname();
   const isPosts = pathname.includes("posts") || pathname === "/profile";
   const isAbout = pathname.includes("about");
   const isFriends = pathname.includes("friends");

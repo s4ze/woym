@@ -3,9 +3,9 @@ import Sidebar from "./Sidebar";
 
 function Layout({ children, hideSidebar }) {
   return (
-    <div className='flex max-w-6xl mt-4 mx-auto gap-4'>
+    <div className="flex max-w-6xl mt-4 mx-auto gap-4">
       {!hideSidebar && (
-        <div className='w-1/4'>
+        <div className="w-1/4">
           <Sidebar />
         </div>
       )}

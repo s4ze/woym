@@ -1,25 +1,27 @@
-"use client";
-import { redirect, usePathname } from "next/navigation";
+// "use client";
+import { usePathname, useRouter } from "next/navigation";
 import Card from "./Card";
 import Link from "next/link";
-import { useState } from "react";
-import Cookies from "universal-cookie";
-import { jwtDecode } from "jwt-decode";
+// import { useAuth } from "../hooks/AuthProvider";
+import axios from "../hooks/axios";
+import toast from "react-hot-toast";
 
 function Sidebar() {
+  const router = useRouter();
   const pathname = usePathname();
-  /*const [user, setUser] = useState();
+  // const { token } = useAuth();
 
-  const cookies = new Cookies();
-  const jwt = cookies.get("refreshToken");
-  const decodedJwt = jwtDecode(jwt);
-  setUser(decodedJwt);
-
-  const logOut = () => {
-    setUser(null);
-    cookies.remove("refreshToken");
-    redirect("/");
-  };*/
+  const logout = async () => {
+    try {
+      const result = await axios.post("/Authentication/logout");
+      if (result.status === 200) {
+        router.push("/");
+        toast.success("Logout successful");
+      }
+    } catch {
+      toast.error("Logout failed");
+    }
+  };
 
   const activeElementClasses =
     "flex gap-3 py-3 my-1 bg-woymBlue text-white -mx-10 px-10 rounded-md shadow-md shadow-gray-300";
@@ -64,9 +66,9 @@ function Sidebar() {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            stroke-width="1.5"
+            strokeWidth="1.5"
             stroke="currentColor"
-            class="size-6"
+            className="size-6"
           >
             <path
               stroke-linecap="round"
@@ -124,30 +126,25 @@ function Sidebar() {
           </svg>
           Notifications
         </Link>
-        {
-          /*user && (*/
-          <button
-            onClick={() => {} /*logOut()*/}
-            className={nonActiveElementClasses}
+        {/* {token &&  */}(
+        <button onClick={logout} className={nonActiveElementClasses}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
-              />
-            </svg>
-            Log out
-          </button>
-          /*)*/
-        }
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
+            />
+          </svg>
+          Log out
+        </button>
+        ){/* } */}
       </div>
     </Card>
   );

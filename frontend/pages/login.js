@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import Cookies from "universal-cookie";
-import { jwtDecode } from "jwt-decode";
+import React, { useEffect } from "react";
 import toast from "react-hot-toast";
-
+import axios from "../hooks/axios";
+import { useAuth } from "../hooks/AuthProvider";
 import Card from "../components/Card";
 import Layout from "../components/Layout";
 
@@ -12,55 +11,33 @@ import "../styles/globals.css";
 
 const LoginPage = () => {
   const router = useRouter();
-  const [user, setUser] = useState();
+  const { token, setToken } = useAuth();
 
-  const url = "http://localhost:5149/api/Authentication/login";
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
-  // console.log(jwt);
+  const url = "/Authentication/login";
 
   useEffect(() => {
-    if (accessToken || refreshToken) router.push("/");
-  });
+    if (token) {
+      toast.success("Already logged in");
+      router.push("/");
+    }
+  }, []);
 
-  const logIn = async () => {
+  const login = async () => {
     const loginEmail = document.querySelector("#email").value;
     const loginPassword = document.querySelector("#password").value;
 
-    const newLogin = {
-      email: loginEmail,
-      password: loginPassword,
-    };
-
-    const headers = new Headers();
-    headers.set("Content-Type", "application/json");
-
-    const options = {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(newLogin),
-    };
-
-    const result = await fetch(url, options);
-    if (result.ok) {
-      const tokens = await result.json();
-      // const parsedTokens = JSON.stringify(tokens);
-      console.log(tokens.AccessToken);
-      const decodedAccessToken = jwtDecode(tokens.accessToken);
-      const decodedRefreshToken = jwtDecode(tokens.refreshToken);
-
-      cookies.set("refreshToken", tokens.refreshToken, {
-        expires: new Date(decodedRefreshToken.exp * 1000),
+    try {
+      const result = await axios.post(url, {
+        email: loginEmail,
+        password: loginPassword,
       });
 
-      cookies.set("accessToken", tokens.accessToken, {
-        expires: new Date(decodedAccessToken.exp * 1000),
-      });
-
-      toast.success("Login succesful");
-      router.push("/");
-    } else {
+      if (result.status === 200) {
+        setToken(result.data.accessToken);
+        toast.success("Login succesful");
+        router.push("/");
+      }
+    } catch {
       toast.error("Login failed");
     }
   };
@@ -94,7 +71,7 @@ const LoginPage = () => {
               </div>
               <div className="mx-2 mt-3 mb-0">
                 <button
-                  onClick={logIn}
+                  onClick={login}
                   className="bg-woymBlue text-white text-lg py-2 rounded-lg w-full"
                 >
                   Login
@@ -107,45 +84,56 @@ const LoginPage = () => {
                 >
                   Sign up
                 </Link>
-                <div className="w-3/4 mx-auto">
-                  <div className="my-3 border border-gray-200 rounded-md">
-                    <Link href="/">
-                      <Card noBottomMargin={true} hoverEffect={true}>
-                        <div className="flex gap-3 items-center justify-center rounded-md">
-                          <svg
-                            width="24"
-                            height="24"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 326667 333333"
-                            shape-rendering="geometricPrecision"
-                            text-rendering="geometricPrecision"
-                            image-rendering="optimizeQuality"
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
-                          >
-                            <path
-                              d="M326667 170370c0-13704-1112-23704-3518-34074H166667v61851h91851c-1851 15371-11851 38519-34074 54074l-311 2071 49476 38329 3428 342c31481-29074 49630-71852 49630-122593m0 0z"
-                              fill="#4285f4"
-                            />
-                            <path
-                              d="M166667 333333c44999 0 82776-14815 110370-40370l-52593-40742c-14074 9815-32963 16667-57777 16667-44074 0-81481-29073-94816-69258l-1954 166-51447 39815-673 1870c27407 54444 83704 91852 148890 91852z"
-                              fill="#34a853"
-                            />
-                            <path
-                              d="M71851 199630c-3518-10370-5555-21482-5555-32963 0-11482 2036-22593 5370-32963l-93-2209-52091-40455-1704 811C6482 114444 1 139814 1 166666s6482 52221 17777 74814l54074-41851m0 0z"
-                              fill="#fbbc04"
-                            />
-                            <path
-                              d="M166667 64444c31296 0 52406 13519 64444 24816l47037-45926C249260 16482 211666 1 166667 1 101481 1 45185 37408 17777 91852l53889 41853c13520-40185 50927-69260 95001-69260m0 0z"
-                              fill="#ea4335"
-                            />
-                          </svg>
-                          Login with Google
-                        </div>
-                      </Card>
-                    </Link>
-                  </div>
-                  <div className="my-3 border border-gray-200 rounded-md">
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </Layout>
+  );
+};
+
+export default LoginPage;
+
+<div className="w-3/4 mx-auto">
+  <div className="my-3 border border-gray-200 rounded-md">
+    <Link href="/">
+      <Card noBottomMargin={true} hoverEffect={true}>
+        <div className="flex gap-3 items-center justify-center rounded-md">
+          <svg
+            width="24"
+            height="24"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 326667 333333"
+            shape-rendering="geometricPrecision"
+            text-rendering="geometricPrecision"
+            image-rendering="optimizeQuality"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+          >
+            <path
+              d="M326667 170370c0-13704-1112-23704-3518-34074H166667v61851h91851c-1851 15371-11851 38519-34074 54074l-311 2071 49476 38329 3428 342c31481-29074 49630-71852 49630-122593m0 0z"
+              fill="#4285f4"
+            />
+            <path
+              d="M166667 333333c44999 0 82776-14815 110370-40370l-52593-40742c-14074 9815-32963 16667-57777 16667-44074 0-81481-29073-94816-69258l-1954 166-51447 39815-673 1870c27407 54444 83704 91852 148890 91852z"
+              fill="#34a853"
+            />
+            <path
+              d="M71851 199630c-3518-10370-5555-21482-5555-32963 0-11482 2036-22593 5370-32963l-93-2209-52091-40455-1704 811C6482 114444 1 139814 1 166666s6482 52221 17777 74814l54074-41851m0 0z"
+              fill="#fbbc04"
+            />
+            <path
+              d="M166667 64444c31296 0 52406 13519 64444 24816l47037-45926C249260 16482 211666 1 166667 1 101481 1 45185 37408 17777 91852l53889 41853c13520-40185 50927-69260 95001-69260m0 0z"
+              fill="#ea4335"
+            />
+          </svg>
+          Login with Google
+        </div>
+      </Card>
+    </Link>
+  </div>
+  {/* <div className="my-3 border border-gray-200 rounded-md">
                     <Link href="/">
                       <Card noBottomMargin={true} hoverEffect={true}>
                         <div className="flex gap-3 items-center justify-center rounded-md">
@@ -191,15 +179,5 @@ const LoginPage = () => {
                         </div>
                       </Card>
                     </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </div>
-    </Layout>
-  );
-};
-
-export default LoginPage;
+                  </div> */}
+</div>;
