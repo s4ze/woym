@@ -53,5 +53,6 @@ namespace woym.Services
             if (user == null) return false;
             return user.Admin;
         }
+
     }
 }

@@ -25,7 +25,6 @@ namespace woym.Services
         }
         public bool CheckRefreshToken(string refreshToken)
         {
-            // gets refreshtoken from user
             var handler = new JwtSecurityTokenHandler();
             handler.ValidateToken(refreshToken, AuthenticationOptions.TokenValidationParameters, out SecurityToken validatedToken);
 
@@ -33,20 +32,16 @@ namespace woym.Services
             {
                 return false;
             }
-            // checks for expiry date
+
             var issuedAt = jwtSecurityToken.Payload.IssuedAt;
             if (issuedAt.CompareTo(DateTime.UtcNow) > 0)
             {
                 return false;
             }
 
-            // decodes token and finds user's email
             var email = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
-
-            // gets this user's refreshToken from db
             var user = _context.Users.First(u => u.Email == email);
 
-            // compares tokens. if both aren't compare then return 401 or 403
             if (user?.RefreshToken == null || user.RefreshToken != refreshToken)
             {
                 return false;
@@ -105,25 +100,15 @@ namespace woym.Services
             // if user is null - unexpected result in system
             return refreshToken;
         }
-        public IResult RefreshToken(string token)
+        public void RemoveRefreshToken(string refreshToken)
         {
-            if (CheckRefreshToken(token))
+            var user = _context.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
+            if (user != null)
             {
-                var handler = new JwtSecurityTokenHandler();
-                var jwtSecurityToken = handler.ReadJwtToken(token);
-
-                var email = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
-                var user = _context.Users.First(u => u.Email == email);
-
-                var accessToken = GenerateAccessToken(email, user.Admin);
-                var refreshToken = GenerateRefreshToken(email);
-
-                TokenResponse tokens = new(accessToken, refreshToken);
-
-                return Results.Ok(tokens);
+                user.RefreshToken = null;
+                _context.Users.Update(user);
+                _context.SaveChanges();
             }
-
-            return Results.Unauthorized();
         }
     }
 }

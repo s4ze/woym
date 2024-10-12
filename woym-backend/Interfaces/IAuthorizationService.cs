@@ -1,5 +1,3 @@
-using woym.Models;
-
 namespace woym.Interfaces;
 public interface IAuthorizationService
 {
@@ -7,5 +5,5 @@ public interface IAuthorizationService
     bool CheckRefreshToken(string refreshToken);
     string GenerateRefreshToken(string email);
     string GenerateAccessToken(string email, bool admin);
-    IResult RefreshToken(string refreshToken);
+    public void RemoveRefreshToken(string email);
 }
