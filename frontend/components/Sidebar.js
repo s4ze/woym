@@ -2,14 +2,15 @@
 import { usePathname, useRouter } from "next/navigation";
 import Card from "./Card";
 import Link from "next/link";
-// import { useAuth } from "../hooks/AuthProvider";
 import axios from "../hooks/axios";
 import toast from "react-hot-toast";
+
+import { useAuth } from "../hooks/AuthProvider";
 
 function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  // const { token } = useAuth();
+  const { user } = useAuth();
 
   const logout = async () => {
     try {
@@ -126,25 +127,25 @@ function Sidebar() {
           </svg>
           Notifications
         </Link>
-        {/* {token &&  */}(
-        <button onClick={logout} className={nonActiveElementClasses}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
-            />
-          </svg>
-          Log out
-        </button>
-        ){/* } */}
+        {user && (
+          <button onClick={logout} className={nonActiveElementClasses}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
+              />
+            </svg>
+            Log out
+          </button>
+        )}
       </div>
     </Card>
   );

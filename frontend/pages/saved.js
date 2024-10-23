@@ -2,8 +2,6 @@ import Layout from "../components/Layout";
 import PostCard from "../components/PostCard";
 import React from "react";
 
-// import "../styles/globals.css";
-
 const SavedPage = () => {
   return (
     <Layout>

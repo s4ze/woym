@@ -2,14 +2,21 @@
 import Layout from "../components/Layout";
 import PostCard from "../components/PostCard";
 import PostFormCard from "../components/PostFormCard";
+import { useAuth } from "../hooks/AuthProvider";
 
-import "../styles/globals.css";
+const Home = () => {
+  const { user } = useAuth();
 
-export default function Home() {
   return (
     <Layout>
-      <PostFormCard />
-      <PostCard />
+      {!user && (
+        <div>
+          <PostFormCard />
+          <PostCard />
+        </div>
+      )}
     </Layout>
   );
-}
+};
+
+export default Home;

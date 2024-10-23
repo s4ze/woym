@@ -1,13 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
-import axios from "../hooks/axios";
+import axios from "../../hooks/axios";
 
-import Card from "../components/Card";
-import Layout from "../components/Layout";
-
-import "../styles/globals.css";
+import Card from "../../components/Card";
+import Layout from "../../components/Layout";
 
 const RegisterPage = () => {
   const registerUrl = "/Authentication/register";

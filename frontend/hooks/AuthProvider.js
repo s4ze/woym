@@ -10,7 +10,7 @@ import {
 
 import axios from "./axios";
 
-const AuthContext = createContext("hihi");
+const AuthContext = createContext(undefined);
 
 export const useAuth = () => {
   const authContext = useContext(AuthContext);
@@ -24,14 +24,17 @@ export const useAuth = () => {
 
 const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchMe = async () => {
       try {
         const response = await axios.get("/Authentication/refresh");
         setToken(response.data.accessToken);
+        setToken(response.data.user);
       } catch {
         setToken(null);
+        setUser(null);
       }
     };
 
@@ -66,10 +69,12 @@ const AuthProvider = ({ children }) => {
           try {
             const response = await axios.get("/Authentication/refresh");
             setToken(response.data.accessToken);
+            setUser(response.data.user);
             originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
             return axios(originalRequest);
           } catch (refreshError) {
             setToken(null);
+            setUser(null);
             return Promise.reject(refreshError);
           }
         }
@@ -84,7 +89,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, setToken }}>
+    <AuthContext.Provider value={{ user, setUser, token, setToken }}>
       {children}
     </AuthContext.Provider>
   );

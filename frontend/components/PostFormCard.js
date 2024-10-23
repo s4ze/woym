@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useAuth } from "../hooks/AuthProvider";
 import Avatar from "./Avatar";
 import Card from "./Card";
 
-function PostFormCard() {
+const PostFormCard = () => {
+  const { user } = useAuth();
+
   return (
     <Card>
       <div className="flex gap-2">
@@ -11,7 +13,9 @@ function PostFormCard() {
         </div>
         <textarea
           className="grow p-3 h-12"
-          placeholder={"What's on your mind, {user}?"}
+          placeholder={`What's on your mind, ${
+            user != null ? user.Name : "guest"
+          }?`}
         />
       </div>
       <div className="flex gap-5 items-center mt-2">
@@ -85,6 +89,6 @@ function PostFormCard() {
       </div>
     </Card>
   );
-}
+};
 
 export default PostFormCard;
