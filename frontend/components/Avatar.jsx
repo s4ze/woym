@@ -13,7 +13,7 @@ function Avatar({ size, src }) {
       <img
         src={
           user != null
-            ? user.Avatar
+            ? user.avatar
             : src != null
             ? src
             : "https://i.pinimg.com/1200x/62/87/26/62872606328a29ace159c2e03926b4df.jpg"

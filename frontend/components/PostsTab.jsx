@@ -1,12 +1,14 @@
-import React from 'react';
-import PostCard from './PostCard';
+import React from "react";
+import PostCard from "./PostCard";
 
 const PostsTab = () => {
-    return (
-        <div>
-            <PostCard />
-        </div>
-    );
-}
+  const post = { Description: "blablablah", CreatedAt: "3 hours ago" };
+
+  return (
+    <div>
+      <PostCard post={post} />
+    </div>
+  );
+};
 
 export default PostsTab;
