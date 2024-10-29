@@ -1,13 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using woym.Contracts;
 using woym.Data;
+using woym.Identity;
 using woym.Interfaces;
-using woym.Models;
 
 namespace woym.Controllers
 {
@@ -29,13 +26,24 @@ namespace woym.Controllers
         [Route("login")]
         public IResult Login(LoginUserRequest user)
         {
-            if (_authenticationService.Login(user.Email, user.Password) == Results.Ok())
+            if (_authenticationService.Login(user.Email, user.Password))
             {
-                var accessToken = new
+                var dbUser = _authenticationService.GetUserByEmail(user.Email);
+                var result = new
                 {
-                    accessToken = _authorizationService.GenerateAccessToken(user.Email, _authenticationService.IsAdmin(user.Email))
+                    accessToken = _authorizationService.GenerateAccessToken(dbUser.UserId.ToString(), _authenticationService.IsAdmin(dbUser.UserId.ToString())),
+                    user = new
+                    {
+                        dbUser.UserId,
+                        dbUser.Email,
+                        dbUser.Name,
+                        dbUser.Admin,
+                        dbUser.CreatedAt,
+                        dbUser.AvatarUrl,
+                        dbUser.BackgroundUrl,
+                    },
                 };
-                var refreshToken = _authorizationService.GenerateRefreshToken(user.Email);
+                var refreshToken = _authorizationService.GenerateRefreshToken(dbUser.UserId.ToString());
 
                 var refreshTokenCookieOptions = new CookieOptions()
                 {
@@ -44,7 +52,7 @@ namespace woym.Controllers
                 };
                 Response.Cookies.Append("refreshToken", refreshToken, refreshTokenCookieOptions);
 
-                return Results.Ok(accessToken);
+                return Results.Ok(result);
             }
             return Results.Unauthorized();
         }
@@ -52,7 +60,12 @@ namespace woym.Controllers
         [Route("register")]
         public IResult Register(RegisterUserRequest user)
         {
-            return _authenticationService.Register(user.Email, user.Name, user.Password);
+            var result = Results.Unauthorized();
+            if (_authenticationService.Register(user.Email, user.Name, user.Password))
+            {
+                result = Results.Ok();
+            }
+            return result;
         }
         [Authorize]
         [HttpPost]
@@ -69,23 +82,26 @@ namespace woym.Controllers
             }
             return Results.Unauthorized();
         }
+        [Authorize]
         [HttpGet]
         [Route("refresh")]
-        public IResult RefreshToken(string refreshToken)
+        public IResult RefreshToken()
         {
+            HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
+
             if (_authorizationService.CheckRefreshToken(refreshToken))
             {
-                var handler = new JwtSecurityTokenHandler();
-                var jwtSecurityToken = handler.ReadJwtToken(refreshToken);
+                var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(refreshToken);
 
-                var email = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
-                var user = _context.Users.First(u => u.Email == email);
+                var userId = jwtSecurityToken.Claims.First(claim => claim.Type == IdentityData.UserIdClaimName).Value;
+                var user = _authenticationService.GetUserById(userId);
 
-                var accessToken = new
+                var result = new
                 {
-                    accessToken = _authorizationService.GenerateAccessToken(email, user.Admin)
+                    accessToken = _authorizationService.GenerateAccessToken(userId, user.Admin),
+                    user = _authenticationService.GetUserById(userId),
                 };
-                refreshToken = _authorizationService.GenerateRefreshToken(email);
+                refreshToken = _authorizationService.GenerateRefreshToken(userId);
 
                 var refreshTokenCookieOptions = new CookieOptions()
                 {
@@ -95,9 +111,53 @@ namespace woym.Controllers
 
                 Response.Cookies.Append("refreshToken", refreshToken, refreshTokenCookieOptions);
 
-                return Results.Ok(accessToken);
+                return Results.Ok(result);
             }
 
+            return Results.Unauthorized();
+        }
+        [Authorize]
+        [RequiresClaim(IdentityData.AdminClaimName, "true")]
+        [HttpPost]
+        [Route("toadmin")]
+        public IResult MakeAdmin([FromBody] string userId)
+        {
+            var user = _authenticationService.GetUserById(userId);
+            if (user != null)
+            {
+                user.Admin = true;
+                _context.SaveChanges();
+                return Results.Ok();
+            }
+            return Results.Unauthorized();
+        }
+        [Authorize]
+        [HttpPost]
+        [Route("remove")]
+        public IResult RemoveUser([FromBody] string userId)
+        {
+            if (_authenticationService.CheckForExistingUserById(userId))
+            {
+                var user = _authenticationService.GetUserById(userId);
+                _context.Users.Remove(user);
+                _context.SaveChanges();
+                return Results.Ok();
+            }
+            return Results.Unauthorized();
+        }
+        [Authorize]
+        [RequiresClaim(IdentityData.AdminClaimName, "true")]
+        [HttpPost]
+        [Route("removeall")]
+        public IResult RemoveAllUsers([FromBody] string userId)
+        {
+            if (_authenticationService.IsAdmin(userId))
+            {
+                var users = _context.Users.Where(u => true);
+                _context.Users.RemoveRange(users);
+                _context.SaveChanges();
+                return Results.Ok();
+            }
             return Results.Unauthorized();
         }
     }

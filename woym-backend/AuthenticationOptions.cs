@@ -1,5 +1,7 @@
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using woym.Data;
 public record AuthenticationOptions
 {
     public const string ISSUER = AuthenticationData.Issuer; // издатель токена

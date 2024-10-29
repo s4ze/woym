@@ -1,7 +1,5 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using woym.Data;
 using woym.Interfaces;
 using woym.Services;
@@ -19,13 +17,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     }
 );
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminPolicy", policy =>
-    {
-        policy.RequireClaim("admin", "true");
-    });
-});
+builder.Services.AddAuthorization();
+
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddDbContext<DataContext>(

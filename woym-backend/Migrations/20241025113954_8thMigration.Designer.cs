@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using woym.Data;
@@ -11,9 +12,11 @@ using woym.Data;
 namespace woym_backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class WoymDataContextModelSnapshot : ModelSnapshot
+    [Migration("20241025113954_8thMigration")]
+    partial class _8thMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,6 +31,9 @@ namespace woym_backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("AuthorUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("PostId")
                         .HasColumnType("uuid");
 
@@ -35,14 +41,11 @@ namespace woym_backend.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(256)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("MediaID");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("AuthorUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("PostId");
 
                     b.ToTable("Media");
                 });
@@ -51,6 +54,9 @@ namespace woym_backend.Migrations
                 {
                     b.Property<Guid>("PostId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AuthorUserId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -64,12 +70,9 @@ namespace woym_backend.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(256)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("PostId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("AuthorUserId");
 
                     b.ToTable("Posts");
                 });
@@ -82,12 +85,6 @@ namespace woym_backend.Migrations
 
                     b.Property<bool>("Admin")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("AvatarUrl")
-                        .HasColumnType("VARCHAR(2048)");
-
-                    b.Property<string>("BackgroundUrl")
-                        .HasColumnType("VARCHAR(2048)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -102,10 +99,10 @@ namespace woym_backend.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(256)");
+                        .HasColumnType("CHAR(60)");
 
                     b.Property<string>("RefreshToken")
-                        .HasColumnType("VARCHAR(256)");
+                        .HasColumnType("CHAR(36)");
 
                     b.HasKey("UserId");
 
@@ -114,30 +111,30 @@ namespace woym_backend.Migrations
 
             modelBuilder.Entity("woym.Models.Media", b =>
                 {
+                    b.HasOne("woym.Models.User", "Author")
+                        .WithMany("Media")
+                        .HasForeignKey("AuthorUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("woym.Models.Post", "Post")
                         .WithMany("Media")
                         .HasForeignKey("PostId");
 
-                    b.HasOne("woym.Models.User", "User")
-                        .WithMany("Media")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Author");
 
                     b.Navigation("Post");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("woym.Models.Post", b =>
                 {
-                    b.HasOne("woym.Models.User", "User")
+                    b.HasOne("woym.Models.User", "Author")
                         .WithMany("Posts")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("AuthorUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("woym.Models.Post", b =>

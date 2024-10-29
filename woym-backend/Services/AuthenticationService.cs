@@ -7,52 +7,58 @@ namespace woym.Services
     public class AuthenticationService : IAuthenticationService
     {
         private readonly DataContext _context;
-        /* public AuthenticationService(DataContext context)
-        {
-            _context = context;
-        } */
         public AuthenticationService(DataContext context)
         {
             _context = context;
         }
-        public IResult Register(string email, string name, string password)
+        public bool Register(string email, string name, string password)
         {
+            var result = false;
             if (!CheckForExistingUserByEmail(email))
             {
-                _context.Users.Add(new User(email, name, password));
+                var user = new User()
+                {
+                    UserId = Guid.NewGuid(),
+                    Email = email,
+                    Name = name,
+                    Password = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt(8)),
+                    Admin = false,
+                    CreatedAt = DateTime.Now.ToUniversalTime(),
+                };
+
+                _context.Users.Add(user);
                 _context.SaveChanges();
-                return Results.Ok();
+                result = true;
             }
-            return Results.Unauthorized();
+            return result;
         }
-        public IResult Login(string email, string password)
+        public bool Login(string email, string password)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
-            {
-                return Results.Ok();
-            }
-            return Results.Unauthorized();
-        }
-        public bool CheckForLogin(string email, string password)
-        {
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
-            if (user == null)
-            {
-                return false;
-            }
+            var user = GetUserByEmail(email);
+            if (user == null) return false;
             return BCrypt.Net.BCrypt.Verify(password, user.Password);
+        }
+        public bool CheckForExistingUserById(string userId)
+        {
+            return _context.Users.Any(u => u.UserId.ToString() == userId);
         }
         public bool CheckForExistingUserByEmail(string email)
         {
             return _context.Users.Any(u => u.Email == email);
         }
-        public bool IsAdmin(string email)
+        public bool IsAdmin(string userId)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            var user = GetUserById(userId);
             if (user == null) return false;
             return user.Admin;
         }
-
+        public User GetUserById(string userId)
+        {
+            return _context.Users.First(u => u.UserId.ToString() == userId);
+        }
+        public User GetUserByEmail(string email)
+        {
+            return _context.Users.First(u => u.Email == email);
+        }
     }
 }
