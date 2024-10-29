@@ -36,15 +36,11 @@ function PostCard({ post }) {
           </Link>
         </div>
         <div className="grow">
-          <p>
-            <Link href={"/profile"}>
-              <span className="font-semibold hover:underline cursor-pointer">
-                {user?.name}
-              </span>
-            </Link>
-            {" shared a "}
-            <span className="text-woymBlue">album</span>
-          </p>
+          <Link href={"/profile"}>
+            <span className="font-semibold hover:underline cursor-pointer">
+              {user?.name || "DEFAULT:Anvar Sizov"}
+            </span>
+          </Link>
           <p className="text-gray-500 text-sm">{post.createdAt}</p>
         </div>
         <div>

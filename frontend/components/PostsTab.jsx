@@ -1,12 +1,12 @@
 import React from "react";
-import PostCard from "./PostCard";
+import Posts from "./Posts";
 
 const PostsTab = () => {
-  const post = { Description: "blablablah", CreatedAt: "3 hours ago" };
+  const posts = [{ description: "blablablah", createdAt: "3 hours ago" }];
 
   return (
     <div>
-      <PostCard post={post} />
+      <Posts posts={posts} />
     </div>
   );
 };

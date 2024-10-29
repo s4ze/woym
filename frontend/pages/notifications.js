@@ -1,58 +1,32 @@
-import Avatar from "../components/Avatar";
 import Card from "../components/Card";
 import Layout from "../components/Layout";
-import Link from "next/link";
 import React from "react";
+import Notifications from "../components/Notifications";
 
 const NotificationsPage = () => {
+  const notifications = [
+    {
+      user: {
+        userId: "1234",
+        name: "Anvar Sizov",
+        avatarUrl: "../public/ackerman.png",
+      },
+      post: { postId: "4321" },
+    },
+    {
+      user: {
+        userId: "5678",
+        name: "Anna Sizova",
+      },
+      post: { postId: "8765" },
+    },
+  ];
+
   return (
     <Layout>
       <h1 className="text-6xl mb-4 text-gray-300">Notifications</h1>
       <Card noPadding={true}>
-        <div>
-          <div className="flex gap-2 items-center py-2 border-b border-b-gray-300 p-4">
-            <Link href="/profile">
-              <Avatar />
-            </Link>
-            <div>
-              <Link href="/profile" className="font-semibold hover:underline">
-                Anvar Sizov
-              </Link>
-              {" liked "}
-              <Link href="" className="text-woymBlue hover:underline">
-                your photo
-              </Link>
-            </div>
-          </div>
-          <div className="flex gap-2 items-center py-2 border-b border-b-gray-300 p-4">
-            <Link href="/profile">
-              <Avatar />
-            </Link>
-            <div>
-              <Link href="/profile" className="font-semibold hover:underline">
-                Anvar Sizov
-              </Link>
-              {" liked "}
-              <Link href="" className="text-woymBlue hover:underline">
-                your photo
-              </Link>
-            </div>
-          </div>
-          <div className="flex gap-2 items-center py-2 border-b border-b-gray-300 p-4">
-            <Link href="/profile">
-              <Avatar />
-            </Link>
-            <div>
-              <Link href="/profile" className="font-semibold hover:underline">
-                Anvar Sizov
-              </Link>
-              {" liked "}
-              <Link href="" className="text-woymBlue hover:underline">
-                your photo
-              </Link>
-            </div>
-          </div>
-        </div>
+        <Notifications notifications={notifications} />
       </Card>
     </Layout>
   );

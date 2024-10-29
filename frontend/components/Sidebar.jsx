@@ -1,8 +1,8 @@
 // "use client";
-import { usePathname, useRouter } from "next/navigation";
 import Card from "./Card";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 import { useAuth } from "../hooks/AuthProvider";
 import api from "../hooks/axios";
@@ -44,7 +44,7 @@ function Sidebar() {
         <Link
           href="/"
           className={
-            router.pathname === "/"
+            router.asPath === "/"
               ? activeElementClasses
               : nonActiveElementClasses
           }
@@ -55,7 +55,7 @@ function Sidebar() {
         <Link
           href="/profile/posts"
           className={
-            router.pathname == "/profile/"
+            router.asPath.includes("/profile")
               ? activeElementClasses
               : nonActiveElementClasses
           }
@@ -66,7 +66,7 @@ function Sidebar() {
         <Link
           href="/saved"
           className={
-            router.pathname === "/saved"
+            router.asPath === "/saved"
               ? activeElementClasses
               : nonActiveElementClasses
           }
@@ -77,7 +77,7 @@ function Sidebar() {
         <Link
           href="/notifications"
           className={
-            router.pathname === "/notifications"
+            router.asPath === "/notifications"
               ? activeElementClasses
               : nonActiveElementClasses
           }

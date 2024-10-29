@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Layout from "../components/Layout";
-import PostCard from "../components/PostCard";
 import PostFormCard from "../components/PostFormCard";
 import { useAuth } from "../hooks/AuthProvider";
 import api from "../hooks/axios";
+import Posts from "../components/Posts";
 
 const Home = () => {
   // const { user } = useAuth();
@@ -47,7 +47,7 @@ const Home = () => {
     }
   };
 
-  useEffect(() => fetchPosts(), []);
+  fetchPosts();
 
   console.log(`posts:${posts}`);
 
@@ -58,9 +58,7 @@ const Home = () => {
       {/* {user && ( */}
       <div>
         <PostFormCard />
-        {posts.map((post, index) => (
-          <PostCard key={index} post={post} />
-        ))}
+        <Posts posts={posts} />
       </div>
     </Layout>
   );
