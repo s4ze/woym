@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
-import axios from "../../hooks/axios";
+import api from "../hooks/axios";
 
-import Card from "../../components/Card";
-import Layout from "../../components/Layout";
+import Card from "../components/Card";
+import Layout from "../components/Layout";
 
 const RegisterPage = () => {
   const registerUrl = "/Authentication/register";
@@ -21,7 +21,7 @@ const RegisterPage = () => {
 
     toast.success("BRUH");
     try {
-      const result = await axios.post(registerUrl, {
+      const result = await api.post(registerUrl, {
         email: email,
         name: name,
         password: password,
@@ -32,7 +32,7 @@ const RegisterPage = () => {
         toast.loading("Attempting to log in...");
 
         try {
-          const loginResult = await axios.post(loginUrl, {
+          const loginResult = await api.post(loginUrl, {
             email: email,
             password: password,
           });
@@ -99,7 +99,7 @@ const RegisterPage = () => {
               </div>
               <div className="mx-2 mt-3 mb-0">
                 <button
-                  onClick={register}
+                  onClick={() => register()}
                   className="bg-woymBlue text-white text-lg py-2 rounded-lg w-full"
                 >
                   Sign up

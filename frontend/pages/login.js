@@ -3,36 +3,37 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
-import axios from "../hooks/axios";
+import api from "../hooks/axios";
 import { useAuth } from "../hooks/AuthProvider";
 import Card from "../components/Card";
 import Layout from "../components/Layout";
 
 const LoginPage = () => {
   const router = useRouter();
-  const { token, setToken } = useAuth();
+  const { user, setUser, setToken } = useAuth();
 
   const url = "/Authentication/login";
 
   useEffect(() => {
-    if (token != null) {
+    if (user != null) {
       toast.success("Already logged in");
       router.push("/");
     }
   }, []);
 
   const login = async () => {
-    const loginEmail = document.querySelector("#email").value;
-    const loginPassword = document.querySelector("#password").value;
+    const email = document.querySelector("#email").value;
+    const password = document.querySelector("#password").value;
 
     try {
-      const result = await axios.post(url, {
-        email: loginEmail,
-        password: loginPassword,
+      const result = await api.post(url, {
+        email: email,
+        password: password,
       });
 
       if (result.status === 200) {
         setToken(result.data.accessToken);
+        setUser(result.data.user);
         toast.success("Login succesful");
         router.push("/");
       }
@@ -70,7 +71,7 @@ const LoginPage = () => {
               </div>
               <div className="mx-2 mt-3 mb-0">
                 <button
-                  onClick={login}
+                  onClick={() => login()}
                   className="bg-woymBlue text-white text-lg py-2 rounded-lg w-full"
                 >
                   Login

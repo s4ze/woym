@@ -4,13 +4,20 @@ import Card from "./Card";
 import useClickOutside from "../hooks/useClickOutside";
 import MoreComponent from "./MoreComponent";
 import Link from "next/link";
+import { useAuth } from "../hooks/AuthProvider";
+import { format } from "timeago.js";
 
-function PostCard() {
+function PostCard({ post }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { user } = useAuth();
 
   let domNode = useClickOutside(() => {
     setDropdownOpen(false);
   });
+
+  let time = null;
+  // const time = post.createdAt;
+  // const time = format(post.CreatedAt);
 
   return (
     <Card>
@@ -26,13 +33,13 @@ function PostCard() {
           <p>
             <Link href={"/profile"}>
               <span className="font-semibold hover:underline cursor-pointer">
-                Anvar Sizov
+                {user?.name}
               </span>
             </Link>
             {" shared a "}
             <span className="text-woymBlue">album</span>
           </p>
-          <p className="text-gray-500 text-sm">2 hours ago</p>
+          <p className="text-gray-500 text-sm">{time}</p>
         </div>
         <div>
           <button
@@ -58,16 +65,7 @@ function PostCard() {
         </div>
       </div>
       <div>
-        <p className="my-3 text-sm">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean vel
-          elit scelerisque mauris. Eu turpis egestas pretium aenean pharetra
-          magna. At tellus at urna condimentum mattis pellentesque id nibh
-          tortor. Cursus eget nunc scelerisque viverra. Ornare suspendisse sed
-          nisi lacus sed viverra tellus. Velit laoreet id donec ultrices
-          tincidunt. Sed vulputate mi sit amet mauris commodo. Netus et
-          malesuada fames ac turpis.
-        </p>
+        <p className="my-3 text-sm">{post?.Description}</p>
         <div className="rounded-xl overflow-hidden">
           <img src="https://images.unsplash.com/photo-1618941672699-b75ba3cfcbd5?q=80&w=3272&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
         </div>

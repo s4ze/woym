@@ -2,22 +2,23 @@
 import { usePathname, useRouter } from "next/navigation";
 import Card from "./Card";
 import Link from "next/link";
-import axios from "../hooks/axios";
 import toast from "react-hot-toast";
 
 import { useAuth } from "../hooks/AuthProvider";
+import api from "../hooks/axios";
 
 function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
   const logout = async () => {
     try {
-      const result = await axios.post("/Authentication/logout");
+      const result = await api.post("/Authentication/logout");
       if (result.status === 200) {
-        router.push("/");
+        setUser(null);
         toast.success("Logout successful");
+        router.refresh();
       }
     } catch {
       toast.error("Logout failed");
@@ -72,8 +73,8 @@ function Sidebar() {
             className="size-6"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
             />
           </svg>
@@ -127,8 +128,8 @@ function Sidebar() {
           </svg>
           Notifications
         </Link>
-        {user && (
-          <button onClick={logout} className={nonActiveElementClasses}>
+        {user ? (
+          <button onClick={() => logout()} className={nonActiveElementClasses}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -145,6 +146,24 @@ function Sidebar() {
             </svg>
             Log out
           </button>
+        ) : (
+          <Link href="/login" className={nonActiveElementClasses}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
+              />
+            </svg>
+            Login
+          </Link>
         )}
       </div>
     </Card>

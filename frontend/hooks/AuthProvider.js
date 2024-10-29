@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 
-import axios from "./axios";
+import api from "./axios";
 
 const AuthContext = createContext(undefined);
 
@@ -29,7 +29,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const response = await axios.get("/Authentication/refresh");
+        const response = await api.get("/Authentication/refresh");
         setToken(response.data.accessToken);
         setToken(response.data.user);
       } catch {
@@ -42,7 +42,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   useLayoutEffect(() => {
-    const authInterceptor = axios.interceptors.request.use((config) => {
+    const authInterceptor = api.interceptors.request.use((config) => {
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -50,12 +50,12 @@ const AuthProvider = ({ children }) => {
     });
 
     return () => {
-      axios.interceptors.request.eject(authInterceptor);
+      api.interceptors.request.eject(authInterceptor);
     };
   }, [token]);
 
   useLayoutEffect(() => {
-    const refreshInterceptor = axios.interceptors.response.use(
+    const refreshInterceptor = api.interceptors.response.use(
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
@@ -67,11 +67,11 @@ const AuthProvider = ({ children }) => {
         ) {
           originalRequest._retry = true;
           try {
-            const response = await axios.get("/Authentication/refresh");
+            const response = await api.get("/Authentication/refresh");
             setToken(response.data.accessToken);
             setUser(response.data.user);
             originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
-            return axios(originalRequest);
+            return api(originalRequest);
           } catch (refreshError) {
             setToken(null);
             setUser(null);
@@ -84,7 +84,7 @@ const AuthProvider = ({ children }) => {
     );
 
     return () => {
-      axios.interceptors.response.eject(refreshInterceptor);
+      api.interceptors.response.eject(refreshInterceptor);
     };
   }, []);
 
