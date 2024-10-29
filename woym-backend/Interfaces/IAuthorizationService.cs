@@ -5,5 +5,4 @@ public interface IAuthorizationService
     bool CheckRefreshToken(string? refreshToken);
     string GenerateRefreshToken(string userId);
     string GenerateAccessToken(string userId, bool admin = false);
-    public void RemoveRefreshToken(string refreshToken);
 }

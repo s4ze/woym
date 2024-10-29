@@ -45,13 +45,13 @@ namespace woym.Services
                 return false;
             }
 
-            var userId = jwtSecurityToken.Claims.First(claim => claim.Type == IdentityData.UserIdClaimName).Value;
-            var user = _context.Users.First(u => u.UserId.ToString() == userId);
+            /* var userId = jwtSecurityToken.Claims.First(claim => claim.Type == IdentityData.UserIdClaimName).Value;
+            var user = _authenticationService.GetUserById(userId);
 
             if (user?.RefreshToken == null || user.RefreshToken != refreshToken)
             {
                 return false;
-            }
+            } */
 
             return true;
         }
@@ -60,7 +60,7 @@ namespace woym.Services
             // Создаём claims
             List<Claim> claims = [new(IdentityData.UserIdClaimName, userId)];
             if (admin == true)
-                claims.Add(new("admin", "true"));
+                claims.Add(new(IdentityData.AdminClaimName, "true"));
             // Создаём token, добавляем claims и указываем headers
             JwtSecurityToken accessTokenValues = new(
                     claims: claims,
@@ -82,7 +82,7 @@ namespace woym.Services
             // Создаём claims
             List<Claim> claims = [new(IdentityData.UserIdClaimName, userId)];
             if (user?.Admin == true)
-                claims.Add(new("admin", "true"));
+                claims.Add(new(IdentityData.AdminClaimName, "true"));
             // Создаём token, добавляем claims и указываем headers
             JwtSecurityToken refreshTokenValues = new(
                     claims: claims,
@@ -96,24 +96,14 @@ namespace woym.Services
                 );
 
             var refreshToken = new JwtSecurityTokenHandler().WriteToken(refreshTokenValues);
-            if (user != null)
+            /* if (user != null)
             {
                 user.RefreshToken = refreshToken;
                 _context.Users.Update(user);
                 _context.SaveChanges();
-            }
+            } */
             // if user is null - unexpected result in system
             return refreshToken;
-        }
-        public void RemoveRefreshToken(string refreshToken)
-        {
-            var user = _context.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
-            if (user != null)
-            {
-                user.RefreshToken = null;
-                _context.Users.Update(user);
-                _context.SaveChanges();
-            }
         }
     }
 }

@@ -72,17 +72,15 @@ namespace woym.Controllers
         [Route("logout")]
         public IResult Logout()
         {
-            var refreshToken = Request.Cookies["refreshToken"];
+            Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
             if (refreshToken != null)
             {
                 Response.Cookies.Delete("refreshToken");
-                _authorizationService.RemoveRefreshToken(refreshToken);
 
                 return Results.Ok();
             }
             return Results.Unauthorized();
         }
-        [Authorize]
         [HttpGet]
         [Route("refresh")]
         public IResult RefreshToken()
@@ -134,13 +132,25 @@ namespace woym.Controllers
         [Authorize]
         [HttpPost]
         [Route("remove")]
-        public IResult RemoveUser([FromBody] string userId)
+        public IResult RemoveUser([FromBody] string userId, [FromHeader] string authorization)
         {
             if (_authenticationService.CheckForExistingUserById(userId))
             {
-                var user = _authenticationService.GetUserById(userId);
-                _context.Users.Remove(user);
-                _context.SaveChanges();
+                // if (Request.Headers.TryGetValue("Authorization", out StringValues authToken))
+                authorization = authorization.Replace("Bearer ", "");
+                var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(authorization);
+
+                // check if user is admin by decoded jwt token
+                var isAdmin = jwtSecurityToken.Claims.FirstOrDefault(claim => claim.Type == IdentityData.AdminClaimName)?.Value == "true";
+
+                var claimUserId = jwtSecurityToken.Claims.First(claim => claim.Type == IdentityData.UserIdClaimName).Value;
+
+                if (isAdmin || claimUserId == userId)
+                {
+                    var user = _authenticationService.GetUserById(userId);
+                    _context.Users.Remove(user);
+                    _context.SaveChanges();
+                }
                 return Results.Ok();
             }
             return Results.Unauthorized();
