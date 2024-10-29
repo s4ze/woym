@@ -10,7 +10,10 @@ import Layout from "../components/Layout";
 
 const LoginPage = () => {
   const router = useRouter();
-  const { user, setUser, setToken } = useAuth();
+  // const { user, setUser, setToken } = useAuth();
+
+  const { user, token, setUser, setToken } = useAuth();
+  console.log(`user:${user}\ntoken:${token}`);
 
   const url = "/Authentication/login";
 
