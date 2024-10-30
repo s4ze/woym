@@ -87,7 +87,7 @@ namespace woym.Controllers
         {
             HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
 
-            if (_authorizationService.CheckRefreshToken(refreshToken))
+            if (refreshToken != null && _authorizationService.CheckRefreshToken(refreshToken))
             {
                 var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(refreshToken);
 

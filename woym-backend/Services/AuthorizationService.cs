@@ -29,7 +29,7 @@ namespace woym.Services
                 return false;
             return true;
         }
-        public bool CheckRefreshToken(string? refreshToken)
+        public bool CheckRefreshToken(string refreshToken)
         {
             var handler = new JwtSecurityTokenHandler();
             handler.ValidateToken(refreshToken, AuthenticationOptions.TokenValidationParameters, out SecurityToken validatedToken);
@@ -44,14 +44,6 @@ namespace woym.Services
             {
                 return false;
             }
-
-            /* var userId = jwtSecurityToken.Claims.First(claim => claim.Type == IdentityData.UserIdClaimName).Value;
-            var user = _authenticationService.GetUserById(userId);
-
-            if (user?.RefreshToken == null || user.RefreshToken != refreshToken)
-            {
-                return false;
-            } */
 
             return true;
         }
