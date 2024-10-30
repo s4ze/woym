@@ -32,7 +32,6 @@ namespace woym.Controllers
                         .Select(p => new
                         {
                             p.PostId,
-                            p.Title,
                             p.Description,
                             p.CreatedAt,
                             p.User.UserId,
@@ -53,7 +52,6 @@ namespace woym.Controllers
                 var post = new Post()
                 {
                     PostId = Guid.NewGuid(),
-                    Title = req.Title,
                     Description = req.Description,
                     CreatedAt = DateTime.Now.ToUniversalTime(),
                     User = _authenticationService.GetUserById(req.UserId),
@@ -71,7 +69,6 @@ namespace woym.Controllers
             var post = GetPostById(postId);
             if (post != null)
             {
-                post.Title = req.Title;
                 post.Description = req.Description;
                 _context.SaveChanges();
                 return Results.Ok();
