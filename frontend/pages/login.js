@@ -9,13 +9,9 @@ import Card from "../components/Card";
 import Layout from "../components/Layout";
 
 const LoginPage = () => {
+  // put user initializing into useEffect to run it every time page loads
+  const { user, setUser, setToken } = useAuth();
   const router = useRouter();
-  // const { user, setUser, setToken } = useAuth();
-
-  const { user, token, setUser, setToken } = useAuth();
-  console.log(`user:${user}\ntoken:${token}`);
-
-  const url = "/Authentication/login";
 
   useEffect(() => {
     if (user != null) {
@@ -29,12 +25,13 @@ const LoginPage = () => {
     const password = document.querySelector("#password").value;
 
     try {
-      const result = await api.post(url, {
+      const result = await api.post("/Authentication/login", {
         email: email,
         password: password,
       });
 
       if (result.status === 200) {
+        console.log(`TOKEN set ${result.data.accessToken}`);
         setToken(result.data.accessToken);
         setUser(result.data.user);
         toast.success("Login succesful");

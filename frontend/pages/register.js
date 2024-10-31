@@ -10,8 +10,6 @@ import Card from "../components/Card";
 import Layout from "../components/Layout";
 
 const RegisterPage = () => {
-  const registerUrl = "/Authentication/register";
-  const loginUrl = "/Authentication/login";
   const router = useRouter();
 
   const register = async () => {
@@ -21,7 +19,7 @@ const RegisterPage = () => {
 
     toast.success("BRUH");
     try {
-      const result = await api.post(registerUrl, {
+      const result = await api.post("/Authentication/register", {
         email: email,
         name: name,
         password: password,
@@ -32,7 +30,7 @@ const RegisterPage = () => {
         toast.loading("Attempting to log in...");
 
         try {
-          const loginResult = await api.post(loginUrl, {
+          const loginResult = await api.post("/Authentication/login", {
             email: email,
             password: password,
           });

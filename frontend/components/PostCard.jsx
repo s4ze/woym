@@ -1,11 +1,13 @@
 import { useState } from "react";
+import Link from "next/link";
+import { format } from "timeago.js";
+
 import Avatar from "./Avatar";
 import Card from "./Card";
-import useClickOutside from "../hooks/useClickOutside";
 import MoreComponent from "./MoreComponent";
-import Link from "next/link";
+
 import { useAuth } from "../hooks/AuthProvider";
-import { format } from "timeago.js";
+import useClickOutside from "../hooks/useClickOutside";
 import {
   AttachIcon,
   CommentIcon,
@@ -29,14 +31,14 @@ function PostCard({ post }) {
     <Card>
       <div ref={domNode} className="flex gap-3">
         <div>
-          <Link href={"/profile"}>
-            <span className="cursor-pointer">
-              <Avatar />
-            </span>
+          <Link href={"/"}>
+            {/* profile */}
+            <Avatar />
           </Link>
         </div>
         <div className="grow">
-          <Link href={"/profile"}>
+          <Link href={"/"}>
+            {/* profile */}
             <span className="font-semibold hover:underline cursor-pointer">
               {user?.name || "DEFAULT:Anvar Sizov"}
             </span>
@@ -79,7 +81,7 @@ function PostCard({ post }) {
         </div>
         <div className="border grow rounded-xl relative">
           <textarea
-            className="block w-full py-2 px-4 h-12 rounded-xl overflow-hidden"
+            className="resize-none block w-full py-2 px-4 h-12 rounded-xl overflow-hidden"
             placeholder="Leave a comment"
           ></textarea>
           <button className="absolute top-3 right-3 text-gray-400">

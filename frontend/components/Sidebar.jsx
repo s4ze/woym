@@ -24,6 +24,7 @@ function Sidebar() {
       const result = await api.post("/Authentication/logout");
       if (result.status === 200) {
         setUser(null);
+        setToken(null);
         toast.success("Logout successful");
         router.refresh();
       }

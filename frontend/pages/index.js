@@ -1,15 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import PostFormCard from "../components/PostFormCard";
 import { useAuth } from "../hooks/AuthProvider";
-import api from "../hooks/axios";
 import Posts from "../components/Posts";
+import fetchPosts from "../hooks/fetchPosts";
+import { useRouter } from "next/router";
 
 const Home = () => {
-  // const { user } = useAuth();
-  const { user, token } = useAuth();
-
+  const router = useRouter();
   const [posts, setPosts] = useState([
     {
       description: "Hello geis, today we have top thinko funiest momentos",
@@ -22,40 +21,14 @@ const Home = () => {
       createdAt: "2 hours ago",
     },
   ]);
+  const { user } = useAuth();
 
-  console.log(`user:${user}\ntoken:${token}`);
-
-  const url = "/Posts/get";
-
-  const fetchPosts = async () => {
-    if (user) {
-      try {
-        const result = await api.get(url, {
-          params: {
-            userId: user.userId,
-          },
-        });
-
-        console.log("user in");
-        if (result.status === 200) {
-          console.log("200 status in");
-          setPosts(result.data.posts);
-        }
-      } catch {
-        toast.error("Fecthing posts failed");
-      }
-    }
-  };
-
-  fetchPosts();
-
-  console.log(`posts:${posts}`);
-
-  // add mapping PostCard elements with number of fetched posts
+  useEffect(() => {
+    if (user) setPosts(fetchPosts(user));
+  }, [router.asPath]);
 
   return (
     <Layout>
-      {/* {user && ( */}
       <div>
         <PostFormCard />
         <Posts posts={posts} />

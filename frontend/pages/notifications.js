@@ -1,15 +1,14 @@
 import Card from "../components/Card";
 import Layout from "../components/Layout";
-import React from "react";
+import React, { useState } from "react";
 import Notifications from "../components/Notifications";
 
 const NotificationsPage = () => {
-  const notifications = [
+  const [notifications, setNotifications] = useState([
     {
       user: {
         userId: "1234",
         name: "Anvar Sizov",
-        avatarUrl: "../public/ackerman.png",
       },
       post: { postId: "4321" },
     },
@@ -20,7 +19,7 @@ const NotificationsPage = () => {
       },
       post: { postId: "8765" },
     },
-  ];
+  ]);
 
   return (
     <Layout>
