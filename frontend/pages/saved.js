@@ -7,7 +7,6 @@ import { useAuth } from "../hooks/AuthProvider";
 const SavedPage = () => {
   const { user, token } = useAuth();
   const [posts, setPosts] = useState([]);
-  console.log("token:", token, "\nuser:", user);
 
   useEffect(() => {
     if (user) setPosts(fetchPosts(user));

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import api from "../hooks/axios";
@@ -31,7 +31,6 @@ const LoginPage = () => {
       });
 
       if (result.status === 200) {
-        console.log(`TOKEN set ${result.data.accessToken}`);
         setToken(result.data.accessToken);
         setUser(result.data.user);
         toast.success("Login succesful");
