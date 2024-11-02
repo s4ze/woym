@@ -53,7 +53,7 @@ namespace woym.Controllers
                 {
                     PostId = Guid.NewGuid(),
                     Description = req.Description,
-                    CreatedAt = DateTime.Now.ToUniversalTime(),
+                    CreatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mmK"),
                     User = _authenticationService.GetUserById(req.UserId),
                 };
                 _context.Posts.Add(post);
@@ -83,6 +83,19 @@ namespace woym.Controllers
             if (post != null)
             {
                 _context.Posts.Remove(post);
+                _context.SaveChanges();
+                return Results.Ok();
+            }
+            return Results.Unauthorized();
+        }
+        [HttpDelete]
+        [Route("removeall")]
+        public IResult RemoveAll(string userId)
+        {
+            var posts = _context.Posts.Where(p => p.User.UserId.ToString() == userId);
+            if (posts != null)
+            {
+                _context.Posts.RemoveRange(posts);
                 _context.SaveChanges();
                 return Results.Ok();
             }

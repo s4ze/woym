@@ -10,5 +10,7 @@ public class Post
 	[Column(TypeName = "VARCHAR(1024)")] public string Description { get; set; }
 	public User User { get; set; }
 	public ICollection<Media>? Media { get; set; }
-	public DateTime CreatedAt { get; set; }
+	[Column(TypeName = "VARCHAR(25)")] public string CreatedAt { get; set; }
+	// public DateTime CreatedAt { get; set; }
+
 }

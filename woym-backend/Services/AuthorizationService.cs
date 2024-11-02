@@ -88,12 +88,6 @@ namespace woym.Services
                 );
 
             var refreshToken = new JwtSecurityTokenHandler().WriteToken(refreshTokenValues);
-            /* if (user != null)
-            {
-                user.RefreshToken = refreshToken;
-                _context.Users.Update(user);
-                _context.SaveChanges();
-            } */
             // if user is null - unexpected result in system
             return refreshToken;
         }

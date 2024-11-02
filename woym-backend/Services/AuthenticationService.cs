@@ -23,9 +23,8 @@ namespace woym.Services
                     Name = name,
                     Password = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt(8)),
                     Admin = false,
-                    CreatedAt = DateTime.Now.ToUniversalTime(),
+                    CreatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mmK"),
                 };
-
                 _context.Users.Add(user);
                 _context.SaveChanges();
                 result = true;
@@ -34,6 +33,7 @@ namespace woym.Services
         }
         public bool Login(string email, string password)
         {
+            if (!CheckForExistingUserByEmail(email)) return false;
             var user = GetUserByEmail(email);
             if (user == null) return false;
             return BCrypt.Net.BCrypt.Verify(password, user.Password);

@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using BCrypt.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using woym.Contracts;
@@ -97,7 +98,18 @@ namespace woym.Controllers
                 var result = new
                 {
                     accessToken = _authorizationService.GenerateAccessToken(userId, user.Admin),
-                    user = _authenticationService.GetUserById(userId),
+                    user = new
+                    {
+                        user.UserId,
+                        user.Email,
+                        user.Name,
+                        user.Admin,
+                        user.CreatedAt,
+                        user.AvatarUrl,
+                        user.BackgroundUrl,
+                        user.City,
+                        user.BirthDate,
+                    },
                 };
                 refreshToken = _authorizationService.GenerateRefreshToken(userId);
 
@@ -130,7 +142,49 @@ namespace woym.Controllers
             return Results.Unauthorized();
         }
         [Authorize]
-        [HttpPost]
+        [HttpGet]
+        [Route("get")]
+        public IResult GetUser([FromQuery] string userId)
+        {
+            var dbUser = _authenticationService.GetUserById(userId);
+            if (dbUser != null)
+            {
+                var user = new
+                {
+                    dbUser.UserId,
+                    dbUser.Email,
+                    dbUser.Name,
+                    dbUser.Admin,
+                    dbUser.CreatedAt,
+                    dbUser.AvatarUrl,
+                    dbUser.BackgroundUrl,
+                    dbUser.City,
+                    dbUser.BirthDate,
+                };
+                return Results.Ok(user);
+            }
+            return Results.Unauthorized();
+        }
+        [Authorize]
+        [HttpPut]
+        [Route("edit")]
+        public IResult EditUser(EditUserRequest user, [FromQuery] string userId)
+        {
+            var dbUser = _authenticationService.GetUserById(userId);
+            if (dbUser != null)
+            {
+                dbUser.Email = user.Email ?? dbUser.Email;
+                dbUser.Name = user.Name ?? dbUser.Name;
+                dbUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password) ?? dbUser.Password;
+                dbUser.BirthDate = user.BirthDate ?? dbUser.BirthDate;
+                dbUser.City = user.City ?? dbUser.City;
+                _context.SaveChanges();
+                return Results.Ok();
+            }
+            return Results.Unauthorized();
+        }
+        [Authorize]
+        [HttpDelete]
         [Route("remove")]
         public IResult RemoveUser([FromBody] string userId, [FromHeader] string authorization)
         {
@@ -157,9 +211,9 @@ namespace woym.Controllers
         }
         [Authorize]
         [RequiresClaim(IdentityData.AdminClaimName, "true")]
-        [HttpPost]
+        [HttpDelete]
         [Route("removeall")]
-        public IResult RemoveAllUsers([FromBody] string userId)
+        public IResult RemoveAllUsers(string userId)
         {
             if (_authenticationService.IsAdmin(userId))
             {
@@ -172,3 +226,4 @@ namespace woym.Controllers
         }
     }
 }
+
