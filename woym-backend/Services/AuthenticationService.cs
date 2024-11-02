@@ -23,7 +23,7 @@ namespace woym.Services
                     Name = name,
                     Password = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt(8)),
                     Admin = false,
-                    CreatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mmK"),
+                    CreatedAt = DateTime.Now.ToString("MM-dd-yyyy HH:mmK"),
                 };
                 _context.Users.Add(user);
                 _context.SaveChanges();

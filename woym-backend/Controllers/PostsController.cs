@@ -53,7 +53,7 @@ namespace woym.Controllers
                 {
                     PostId = Guid.NewGuid(),
                     Description = req.Description,
-                    CreatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mmK"),
+                    CreatedAt = DateTime.Now.ToString("MM-dd-yyyy HH:mmK"),
                     User = _authenticationService.GetUserById(req.UserId),
                 };
                 _context.Posts.Add(post);
