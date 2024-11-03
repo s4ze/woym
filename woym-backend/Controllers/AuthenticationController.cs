@@ -175,8 +175,8 @@ namespace woym.Controllers
             {
                 dbUser.Email = user.Email ?? dbUser.Email;
                 dbUser.Name = user.Name ?? dbUser.Name;
-                dbUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password) ?? dbUser.Password;
-                dbUser.BirthDate = user.BirthDate ?? dbUser.BirthDate;
+                dbUser.Password = user.Password != null ? BCrypt.Net.BCrypt.HashPassword(user.Password) : dbUser.Password;
+                dbUser.BirthDate = DateOnly.TryParse(user.BirthDate, out var birthdate) ? birthdate : dbUser.BirthDate;
                 dbUser.City = user.City ?? dbUser.City;
                 _context.SaveChanges();
                 return Results.Ok();

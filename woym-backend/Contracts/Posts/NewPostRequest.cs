@@ -4,5 +4,6 @@ namespace woym.Contracts;
 
 public record NewPostRequest(
 	[Required] string UserId,
-	[Required] string Description
+	[Required] string Description,
+	string Media
 );

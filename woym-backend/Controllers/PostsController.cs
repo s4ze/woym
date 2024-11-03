@@ -49,14 +49,27 @@ namespace woym.Controllers
         {
             if (_authenticationService.CheckForExistingUserById(req.UserId))
             {
+                var postId = Guid.NewGuid();
                 var post = new Post()
                 {
-                    PostId = Guid.NewGuid(),
+                    PostId = postId,
                     Description = req.Description,
                     CreatedAt = DateTime.Now.ToString("MM-dd-yyyy HH:mmK"),
                     User = _authenticationService.GetUserById(req.UserId),
                 };
                 _context.Posts.Add(post);
+
+                var media = new Media()
+                {
+                    MediaID = Guid.NewGuid(),
+                    Url = req.Media,
+                    User = _authenticationService.GetUserById(req.UserId),
+                    Post = post,
+                };
+                _context.Media.Add(media);
+
+                post.Media = [media];
+
                 _context.SaveChanges();
                 return Results.Ok();
             }

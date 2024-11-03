@@ -4,6 +4,6 @@ public record EditUserRequest(
 	string? Email,
 	string? Name,
 	string? Password,
-	DateOnly? BirthDate,
+	string? BirthDate,
 	string? City
 );
