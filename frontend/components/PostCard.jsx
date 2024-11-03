@@ -24,8 +24,7 @@ function PostCard({ post }) {
     setDropdownOpen(false);
   });
 
-  // let time = null;
-  // const time = format(post.CreatedAt);
+  const time = format(post?.createdAt.substring(0, 16));
 
   return (
     <Card>
@@ -43,7 +42,7 @@ function PostCard({ post }) {
               {user?.name || "DEFAULT:Anvar Sizov"}
             </span>
           </Link>
-          <p className="text-gray-500 text-sm">{post.createdAt}</p>
+          <p className="text-gray-500 text-sm">{time}</p>
         </div>
         <div>
           <button
@@ -52,13 +51,15 @@ function PostCard({ post }) {
           >
             <MoreIcon />
           </button>
-          <div className="relative">{dropdownOpen && <MoreComponent />}</div>
+          <div className="relative">
+            {dropdownOpen && <MoreComponent postId={post?.postId} />}
+          </div>
         </div>
       </div>
       <div>
         <p className="my-3 text-sm">{post.description}</p>
         <div className="rounded-xl overflow-hidden">
-          <img src={post?.media} />
+          <img src={post?.media[0]?.url} />
         </div>
       </div>
       <div className="flex gap-5 mt-4">

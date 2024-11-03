@@ -53,17 +53,19 @@ function Sidebar() {
           <HomeIcon />
           Home
         </Link>
-        <Link
-          href="/profile/posts"
-          className={
-            router.asPath.includes("/profile")
-              ? activeElementClasses
-              : nonActiveElementClasses
-          }
-        >
-          <ProfileIcon />
-          Profile
-        </Link>
+        {user && (
+          <Link
+            href="/profile/posts"
+            className={
+              router.asPath.includes("/profile")
+                ? activeElementClasses
+                : nonActiveElementClasses
+            }
+          >
+            <ProfileIcon />
+            Profile
+          </Link>
+        )}
         <Link
           href="/saved"
           className={

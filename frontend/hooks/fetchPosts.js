@@ -1,16 +1,16 @@
 import toast from "react-hot-toast";
+import api from "./axios";
 
-const fetchPosts = ({ user }) => {
+const fetchPosts = async (user) => {
   if (user == null) {
     toast.error("No user for fetching posts");
-    return [{ description: "no user for displaying" }];
+    return [];
   }
-  // return [];
 
   try {
-    const result = api.get("/Posts/get", {
+    const result = await api.get("/Posts/get", {
       params: {
-        userId: user?.userId,
+        userId: user.userId,
       },
     });
 
@@ -20,8 +20,7 @@ const fetchPosts = ({ user }) => {
   } catch {
     toast.error("Fetching posts failed");
   }
-  return [{ description: "bruh" }];
-  // return [];
+  return [];
 };
 
 export default fetchPosts;

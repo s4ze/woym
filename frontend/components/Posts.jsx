@@ -1,7 +1,16 @@
 import PostCard from "./PostCard";
 
 const Posts = ({ posts }) => {
-  return posts.map((post, index) => <PostCard key={index} post={post} />);
+  try {
+    const postCards = posts.map((post, index) => (
+      <PostCard key={index} post={post} />
+    ));
+    return postCards;
+  } catch (e) {
+    console.log(e);
+  }
+
+  return <div></div>;
 };
 
 export default Posts;

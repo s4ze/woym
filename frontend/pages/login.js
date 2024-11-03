@@ -1,17 +1,20 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../hooks/axios";
 import { useAuth } from "../hooks/AuthProvider";
 import Card from "../components/Card";
 import Layout from "../components/Layout";
+import InputForm from "../components/InputForm";
 
 const LoginPage = () => {
-  // put user initializing into useEffect to run it every time page loads
-  const { user, setUser, setToken } = useAuth();
   const router = useRouter();
+  const { user, setUser, setToken } = useAuth();
+
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
 
   useEffect(() => {
     if (user != null) {
@@ -21,9 +24,6 @@ const LoginPage = () => {
   }, []);
 
   const login = async () => {
-    const email = document.querySelector("#email").value;
-    const password = document.querySelector("#password").value;
-
     try {
       const result = await api.post("/Authentication/login", {
         email: email,
@@ -36,7 +36,7 @@ const LoginPage = () => {
         toast.success("Login succesful");
         router.push("/");
       }
-    } catch {
+    } catch (e) {
       toast.error("Login failed");
     }
   };
@@ -48,26 +48,12 @@ const LoginPage = () => {
           <h1 className="text-6xl mb-4 text-gray-300">Login</h1>
           <Card>
             <div className="m-2">
-              <div className="m-2">
-                <h2 className="text-2xl mb-0 font-medium text-gray-600">
-                  E-mail
-                </h2>
-                <input
-                  id="email"
-                  className="border-2 rounded-md p-2 w-full"
-                  type="email"
-                />
-              </div>
-              <div className="m-2">
-                <h2 className="text-2xl mb-0 font-medium text-gray-600">
-                  Password
-                </h2>
-                <input
-                  id="password"
-                  className="border-2 rounded-md p-2 w-full"
-                  type="password"
-                />
-              </div>
+              <InputForm name="Email" setValue={setEmail} type="email" />
+              <InputForm
+                name="Password"
+                setValue={setPassword}
+                type="password"
+              />
               <div className="mx-2 mt-3 mb-0">
                 <button
                   onClick={() => login()}

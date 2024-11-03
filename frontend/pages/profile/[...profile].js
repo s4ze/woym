@@ -13,8 +13,6 @@ import FriendsTab from "../../components/FriendsTab";
 import PhotosTab from "../../components/PhotosTab";
 import PostsTab from "../../components/PostsTab";
 
-import "../../styles/globals.css";
-
 import {
   PostsIcon,
   AboutIcon,
@@ -22,6 +20,7 @@ import {
   PhotosIcon,
 } from "../../public/icons";
 import { useAuth } from "../../hooks/AuthProvider";
+import EditTab from "../../components/EditTab";
 
 function ProfilePage() {
   const { user } = useAuth();
@@ -31,6 +30,7 @@ function ProfilePage() {
   const isAbout = router.asPath == "/profile/about";
   const isFriends = router.asPath == "/profile/friends";
   const isPhotos = router.asPath == "/profile/photos";
+  const isEdit = router.asPath == "/profile/edit";
 
   const nonActiveTabClasses =
     "flex gap-1 px-4 py-1 items-center border-b-4 border-white";
@@ -50,10 +50,10 @@ function ProfilePage() {
             />
           </div>
           <div className="absolute top-24 left-4">
-            <Avatar size="lg" />
+            <Avatar src={user?.avatarUrl} size="lg" />
           </div>
           <div className="p-4">
-            <div className="ml-40">
+            <div className="ml-40 mt-5">
               <h1 className="text-3xl font-semibold">
                 {user?.name || "DEFAULT:Anvar Sizov"}
               </h1>
@@ -61,43 +61,46 @@ function ProfilePage() {
                 {user?.city || "DEFAULT:Surgut, Russia"}
               </div>
             </div>
-            <div className="mt-10 flex gap-1">
-              <Link
-                href="/profile/posts"
-                className={isPosts ? activeTabClasses : nonActiveTabClasses}
-              >
-                <PostsIcon />
-                Posts
-              </Link>
-              <Link
-                href="/profile/about"
-                className={isAbout ? activeTabClasses : nonActiveTabClasses}
-              >
-                <AboutIcon />
-                About
-              </Link>
-              <Link
-                href="/profile/friends"
-                className={isFriends ? activeTabClasses : nonActiveTabClasses}
-              >
-                <FriendsIcon />
-                Friends
-              </Link>
-              <Link
-                href="/profile/photos"
-                className={isPhotos ? activeTabClasses : nonActiveTabClasses}
-              >
-                <PhotosIcon />
-                Photos
-              </Link>
-            </div>
+            {!isEdit && (
+              <div className="mt-5 flex gap-1">
+                <Link
+                  href="/profile/posts"
+                  className={isPosts ? activeTabClasses : nonActiveTabClasses}
+                >
+                  <PostsIcon />
+                  Posts
+                </Link>
+                <Link
+                  href="/profile/about"
+                  className={isAbout ? activeTabClasses : nonActiveTabClasses}
+                >
+                  <AboutIcon />
+                  About
+                </Link>
+                <Link
+                  href="/profile/friends"
+                  className={isFriends ? activeTabClasses : nonActiveTabClasses}
+                >
+                  <FriendsIcon />
+                  Friends
+                </Link>
+                <Link
+                  href="/profile/photos"
+                  className={isPhotos ? activeTabClasses : nonActiveTabClasses}
+                >
+                  <PhotosIcon />
+                  Photos
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </Card>
-      {isPosts && <PostsTab />}
-      {isAbout && <AboutTab />}
-      {isFriends && <FriendsTab />}
-      {isPhotos && <PhotosTab />}
+      {!isEdit && isPosts && <PostsTab />}
+      {!isEdit && isAbout && <AboutTab />}
+      {!isEdit && isFriends && <FriendsTab />}
+      {!isEdit && isPhotos && <PhotosTab />}
+      {isEdit && <EditTab />}
     </Layout>
   );
 }

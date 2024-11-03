@@ -8,14 +8,14 @@ const NotificationsPage = () => {
     {
       user: {
         userId: "1234",
-        name: "Anvar Sizov",
+        name: "Georgiy Sizov",
       },
       post: { postId: "4321" },
     },
     {
       user: {
         userId: "5678",
-        name: "Anna Sizova",
+        name: "Natalya Sazonova",
       },
       post: { postId: "8765" },
     },

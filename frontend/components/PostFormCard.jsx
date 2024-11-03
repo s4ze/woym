@@ -2,21 +2,24 @@ import toast from "react-hot-toast";
 
 import Avatar from "./Avatar";
 import Card from "./Card";
-import { CheckInIcon, MoodIcon, ProfileIcon } from "../public/icons";
+import InputForm from "./InputForm";
 
 import api from "../hooks/axios";
 import { useAuth } from "../hooks/AuthProvider";
+import { CheckInIcon, MoodIcon, ProfileIcon } from "../public/icons";
+import { useState } from "react";
 
 const PostFormCard = () => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+  const [media, setMedia] = useState(null);
 
   const addPost = async () => {
     const description = document.querySelector("#post").value;
-    console.log(description);
     try {
       const result = await api.post("/Posts/add", {
         userId: user.userId,
         description: description,
+        media: media,
       });
 
       if (result.status === 200) {
@@ -59,6 +62,11 @@ const PostFormCard = () => {
             Mood
           </button>
         </div>
+        <InputForm
+          size="sm"
+          setValue={setMedia}
+          placeholder="http://image-url.com"
+        />
         <div className="grow text-right">
           <button
             className="bg-woymBlue text-white px-6 py-1 rounded-md"

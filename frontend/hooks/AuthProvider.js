@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
 
 import api from "./axios";
 
@@ -41,18 +35,20 @@ const AuthProvider = ({ children }) => {
 
   useLayoutEffect(() => {
     const refreshInterceptor = api.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        return response;
+      },
       async (error) => {
         const originalRequest = error.config;
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           try {
-            const response = await api.get("/Authentication/refresh");
+            const result = await api.get("/Authentication/refresh");
 
-            setToken(response.data.accessToken);
-            setUser(response.data.user);
+            setToken(result.data.accessToken);
+            setUser(result.data.user);
 
-            originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
+            originalRequest.headers.Authorization = `Bearer ${result.data.accessToken}`;
             return api(originalRequest);
           } catch (refreshError) {
             setToken(null);

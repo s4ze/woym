@@ -2,22 +2,25 @@
 
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import api from "../hooks/axios";
 
 import Card from "../components/Card";
 import Layout from "../components/Layout";
+import InputForm from "../components/InputForm";
+import { useAuth } from "../hooks/AuthProvider";
 
 const RegisterPage = () => {
+  const [email, setEmail] = useState(null);
+  const [name, setName] = useState(null);
+  const [password, setPassword] = useState(null);
+
   const router = useRouter();
 
   const register = async () => {
-    const email = document.querySelector("#email").value;
-    const name = document.querySelector("#name").value;
-    const password = document.querySelector("#password").value;
+    const { setUser } = useAuth();
 
-    toast.success("BRUH");
     try {
       const result = await api.post("/Authentication/register", {
         email: email,
@@ -27,7 +30,6 @@ const RegisterPage = () => {
 
       if (result.status === 200) {
         toast.success("Register successful");
-        toast.loading("Attempting to log in...");
 
         try {
           const loginResult = await api.post("/Authentication/login", {
@@ -37,18 +39,17 @@ const RegisterPage = () => {
 
           if (loginResult.status === 200) {
             setToken(loginResult.data.accessToken);
+            setUser(loginResult.data.user);
             toast.success("Login succesful");
             router.push("/");
           }
         } catch (e) {
           toast.error("Login failed");
           router.push("/login");
-          console.log(e.message);
         }
       }
     } catch (e) {
       toast.error("Register failed");
-      console.log(e.message);
     }
   };
 
@@ -59,36 +60,19 @@ const RegisterPage = () => {
           <h1 className="text-6xl mb-4 text-gray-300">Registration</h1>
           <Card>
             <div className="m-2">
-              <div className="m-2">
-                <h2 className="text-2xl mb-0 font-medium text-gray-600">
-                  E-mail
-                </h2>
-                <input
-                  id="email"
-                  className="border-2 rounded-md p-2 w-full"
-                  type="email"
-                />
-              </div>
-              <div className="m-2">
-                <h2 className="text-2xl mb-0 font-medium text-gray-600">
-                  Name
-                </h2>
-                <input
-                  id="name"
-                  className="border-2 rounded-md p-2 w-full"
-                  type="text"
-                />
-              </div>
-              <div className="m-2">
-                <h2 className="text-2xl mb-0 font-medium text-gray-600">
-                  Password
-                </h2>
-                <input
-                  id="password"
-                  className="border-2 rounded-md p-2 w-full"
-                  type="text"
-                />
-              </div>
+              <InputForm
+                name="Email"
+                setValue={setEmail}
+                type="email"
+                size="md"
+              />
+              <InputForm name="Name" setValue={setName} size="md" />
+              <InputForm
+                name="Password"
+                setValue={setPassword}
+                type="password"
+                size="md"
+              />
               <div className="m-2">
                 <h2 className="text-2xl mb-0 font-medium text-gray-600">
                   Confirm password
